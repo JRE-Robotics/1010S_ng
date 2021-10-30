@@ -52,49 +52,68 @@ void competition_initialize() {
  */
 
 void autonomous() {
+  bool AWP_AUTO = false;
+
   // Init chassis controller and set brake mode + velocity
   std::shared_ptr<okapi::OdomChassisController> chassis = build_chassis_controller();
   chassis->getModel()->setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
-  chassis->setMaxVelocity(50);
+  chassis->setMaxVelocity(100);
 
   // Init motors
   okapi::Motor arm_l(ARM_LEFT_MOTOR_PORT, true, okapi::AbstractMotor::gearset::red, okapi::AbstractMotor::encoderUnits::rotations);
   okapi::Motor arm_r(ARM_RIGHT_MOTOR_PORT, false, okapi::AbstractMotor::gearset::red, okapi::AbstractMotor::encoderUnits::rotations);
   okapi::Motor clamp(CLAMP_MOTOR_PORT, false, okapi::AbstractMotor::gearset::blue, okapi::AbstractMotor::encoderUnits::rotations);
 
-  // Raise arm
-  arm_l.moveVelocity(200);
-  arm_r.moveVelocity(200);
-  pros::delay(500);
-  arm_l.moveVelocity(0);
-  arm_r.moveVelocity(0);
+  if (AWP_AUTO) {
+    // Raise arm
+    arm_l.moveVelocity(200);
+    arm_r.moveVelocity(200);
+    pros::delay(500);
+    arm_l.moveVelocity(0);
+    arm_r.moveVelocity(0);
 
-  // Move to goal
-  chassis->moveDistance(10_in);
-  chassis->turnAngle(60_deg);
-  chassis->moveDistance(10_in);
+    // Move to goal
+    chassis->moveDistance(10_in);
+    chassis->turnAngle(65_deg);
+    chassis->moveDistance(10_in);
 
-  // Drop ring and move back
-  clamp.moveVelocity(600);
-  pros::delay(2500);
-  clamp.moveVelocity(0);
-  chassis->moveDistance(-10_in);
+    // Drop ring and move back
+    clamp.moveVelocity(600);
+    pros::delay(2500);
+    clamp.moveVelocity(0);
+    chassis->moveDistance(-10_in);
 
-  // Drop arm
-  arm_l.moveVelocity(-200);
-  arm_r.moveVelocity(-200);
-  pros::delay(500);
-  arm_l.moveVelocity(0);
-  arm_r.moveVelocity(0);
+    // Drop arm
+    arm_l.moveVelocity(-200);
+    arm_r.moveVelocity(-200);
+    pros::delay(500);
+    arm_l.moveVelocity(0);
+    arm_r.moveVelocity(0);
 
-  // Move forward and grab goal
-  chassis->moveDistance(15_in);
-  clamp.moveVelocity(-600);
-  pros::delay(2500);
-  clamp.moveVelocity(0);
+    // Move forward and grab goal
+    chassis->setMaxVelocity(50);
+    chassis->moveDistance(15_in);
+    clamp.moveVelocity(-600);
+    pros::delay(2500);
+    clamp.moveVelocity(0);
 
-  // Move back
-  chassis->moveDistance(-16_in);
+    // Move back
+    chassis->moveDistance(-16_in);
+  }
+  else {
+    // Move forward fast, then slow
+    chassis->moveDistance(50_in);
+    pros::delay(500);
+    chassis->setMaxVelocity(50);
+    chassis->moveDistance(5_in);
+
+    // Clamp and move back
+    clamp.moveVelocity(-600);
+    pros::delay(2500);
+    clamp.moveVelocity(0);
+    chassis->setMaxVelocity(100);
+    chassis->moveDistance(-50_in);
+  }
 }
 
 /**
@@ -122,7 +141,7 @@ void opcontrol() {
 
   // Default modes
   DRIVETRAIN_MODE dt_mode = FAST;
-  CONTROL_MODE ctrl_mode = ARCADE;
+  CONTROL_MODE ctrl_mode = TANK;
 
   // Set brake mode
   chassis->getModel()->setBrakeMode(okapi::AbstractMotor::brakeMode::hold);
