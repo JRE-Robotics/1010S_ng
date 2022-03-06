@@ -12,6 +12,7 @@ namespace lcd {
   void display_mode(okapi::Controller, DRIVETRAIN_MODE);
   void display_mode(okapi::Controller, CONTROL_MODE);
   void display_battery_info(okapi::Controller);
+  void display_mogo_switch(okapi::Controller, bool);
 }
 
 #endif  // #ifndef _LCD_H_

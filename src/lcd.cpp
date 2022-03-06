@@ -2,13 +2,16 @@
 
 namespace lcd {
   // Constants for display
-  const std::string VERSION = "1010S v0.1";
+  const std::string VERSION = "1010S v0.1 xcjdf";
 
   const std::string DT_MODE_FAST = "DT: Fast";
   const std::string DT_MODE_SLOW = "DT: Slow";
 
   const std::string CTRL_MODE_ARCADE = "CTRL: Arcade";
   const std::string CTRL_MODE_TANK = "CTRL: Tank  ";
+
+  const std::string MOGO_SWITCH_PRESSED = "MOGO: PRESSED";
+  const std::string MOGO_SWITCH_NOT_PRESSED = "MOGO: NOTHING";
 
   void init() {
     pros::lcd::initialize();
@@ -48,5 +51,14 @@ namespace lcd {
     snprintf(buf, sizeof(buf), "BAT: %.1f%% | %.2fA", capacity, current);
     controller.setText(0, 0, buf);
     pros::lcd::set_text(3, buf);
+  }
+
+  void display_mogo_switch(okapi::Controller controller, bool pressed) {
+    if (pressed) {
+      controller.setText(0, 0, MOGO_SWITCH_PRESSED);
+    }
+    else {
+      controller.setText(0, 0, MOGO_SWITCH_NOT_PRESSED);
+    }
   }
 }
